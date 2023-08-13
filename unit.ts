@@ -1,4 +1,4 @@
-import { game } from './index'
+import { game } from './game'
 
 export const PowerTypes = {
   NONE: 0,
@@ -32,7 +32,7 @@ export interface UnitOptions {
 }
 
 export class Unit {
-  public static guid_index = 0
+  public static new_guid_index = 0
 
   public guid: number
   public name: string
@@ -48,7 +48,7 @@ export class Unit {
   private attacking: number = -1
 
   constructor (options: UnitOptions) {
-    this.guid = options.guid || Unit.guid_index++
+    this.guid = options.guid || Unit.new_guid_index++
     this.name = options.name
     this.health = (typeof options.health === 'number') ? options.health : 1
     this.maxHealth = options.maxHealth || 1
@@ -63,6 +63,7 @@ export class Unit {
       this.attackMax = options.attackMax
     if (typeof options.attackSpeed === 'number')
       this.attackSpeed = options.attackSpeed
+    game.AddUnit(this)
   }
 
   public GetGUID () {
@@ -76,7 +77,7 @@ export class Unit {
   public SetTarget (target: number) {
     if (!target || (target === -1))
       this.target = -1
-    else if (game.DoesUnitExist(target))
+    else if (Unit.Exists(target))
       this.target = target
     else
       console.error(`tried to set target to invalid unit guid (${target})`)
@@ -85,18 +86,26 @@ export class Unit {
   public StartAttacking (target: number) {
     if (!target || (target === -1))
       this.attacking = -1
-    else if (game.DoesUnitExist(target))
+    else if (Unit.Exists(target))
       this.attacking = target
     else
       console.error(`tried to set attacking to invalid unit guid (${target})`)
   }
 
-  public GetAttacking () {
+  public StopAttacking () {
+    this.attacking = -1
+  }
+
+  public IsAttacking () {
     return this.attacking
   }
 
   public SetHealth (health: number) {
     this.health = health
+  }
+
+  public static Exists (guid: number) {
+    return game.DoesUnitExist(guid)
   }
 
   public static Validate (options: any) {
@@ -108,8 +117,7 @@ export class Unit {
   }
 
   public static Create (options: UnitOptions) {
-    const unit = new Unit(options)
-    game.AddUnit(unit)
-    return unit
+    console.log(options)
+    return new Unit(options)
   }
 }

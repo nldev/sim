@@ -2,21 +2,6 @@ import { Thunkify } from './types'
 import { UnitOptions } from './unit'
 import { GetTime } from './utils'
 
-export type Opcode = keyof typeof OPCODES
-export type OpcodeID = (typeof OPCODES)[Opcode]
-export const OPCODES = {
-  NOOP: 0,
-  // unit
-  UNIT_SET_TARGET: 1,
-  UNIT_CLEAR_TARGET: 2,
-  UNIT_CREATE: 3,
-  UNIT_START_ATTACKING: 4,
-  UNIT_STOP_ATTACKING: 5,
-  // debug
-  DEBUG_LOG: 6,
-  DEBUG_SCRIPT: 7,
-} as const
-
 export function Event (opcode: OpcodeID, payload: any, delay: number = 0) {
   switch (opcode) {
     case OPCODES.UNIT_CREATE:
@@ -37,6 +22,22 @@ export function Event (opcode: OpcodeID, payload: any, delay: number = 0) {
       return new BaseEvent(payload, delay)
   }
 }
+
+export type Opcode = keyof typeof OPCODES
+export type OpcodeID = (typeof OPCODES)[Opcode]
+
+export const OPCODES = {
+  NOOP: 0,
+  // unit
+  UNIT_SET_TARGET: 1,
+  UNIT_CLEAR_TARGET: 2,
+  UNIT_CREATE: 3,
+  UNIT_START_ATTACKING: 4,
+  UNIT_STOP_ATTACKING: 5,
+  // debug
+  DEBUG_LOG: 6,
+  DEBUG_SCRIPT: 7,
+} as const
 
 export class BaseEvent {
   public opcode: OpcodeID = OPCODES.NOOP
